@@ -1,0 +1,23 @@
+Linux driver for WinChipHead CH423, a GPIO expander driver
+
+To build:
+
+  make
+
+To load the driver (as root):
+
+  insmod ./ch423.ko
+
+To instantiate the device (as root), replacing XXX with the proper i2c bus:
+
+  echo "ch423 0x24" > /sys/bus/i2c/devices/i2c-XXX/new_device
+
+Note that the i2c address given is meaningless. This device has some severe
+limitations and is abusing the i2c protocol. See the comments at the
+top of source code.
+
+The GPIOs can then be used with the regular linux tools and interfaces.
+
+A cheap breakout board (US $1.30) is available at:
+
+  https://www.electrodragon.com/product/i2c-to-gpio-io-expander-breaktout-board-ch423/
