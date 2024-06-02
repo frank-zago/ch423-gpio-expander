@@ -31,11 +31,12 @@
  *     http://www.wch.cn/downloads/CH423EVT_ZIP.html
  */
 
-#include <linux/module.h>
-#include <linux/init.h>
-#include <linux/slab.h>
-#include <linux/i2c.h>
 #include <linux/gpio/driver.h>
+#include <linux/i2c.h>
+#include <linux/init.h>
+#include <linux/version.h>
+#include <linux/module.h>
+#include <linux/slab.h>
 
 #define CMD_SET_OC_L 0x22
 #define CMD_SET_OC_H 0x23
@@ -264,8 +265,11 @@ static const struct gpio_chip ch423_gpio_chip = {
 	.ngpio = 24,
 };
 
-static int ch423_probe(struct i2c_client *client,
-		       const struct i2c_device_id *id)
+static int ch423_probe(struct i2c_client *client
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,3,0)
+		       , const struct i2c_device_id *id
+#endif
+)
 {
 	struct gpio_chip *gpio;
 	struct ch423 *dev;
