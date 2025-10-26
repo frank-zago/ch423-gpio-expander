@@ -140,8 +140,13 @@ static int write_outputs(struct ch423 *dev, unsigned long values)
 	return 0;
 }
 
-static void ch423_gpio_set_multiple(struct gpio_chip *chip,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
+static int ch423_gpio_set_multiple(struct gpio_chip *chip,
 				    unsigned long *mask, unsigned long *bits)
+#else
+	static void ch423_gpio_set_multiple(struct gpio_chip *chip,
+				    unsigned long *mask, unsigned long *bits)
+#endif
 {
 	struct ch423 *dev = gpiochip_get_data(chip);
 	unsigned long values;
@@ -155,9 +160,17 @@ static void ch423_gpio_set_multiple(struct gpio_chip *chip,
 	write_outputs(dev, values);
 
 	mutex_unlock(&dev->lock);
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
+	return 0;
+#endif
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
+static int ch423_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+#else
 static void ch423_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+#endif
 {
 	struct ch423 *dev = gpiochip_get_data(chip);
 	unsigned long values;
@@ -171,6 +184,10 @@ static void ch423_gpio_set(struct gpio_chip *chip, unsigned int offset, int valu
 	write_outputs(dev, values);
 
 	mutex_unlock(&dev->lock);
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
+	return 0;
+#endif
 }
 
 /* Set some of the chip configuration bits. */
